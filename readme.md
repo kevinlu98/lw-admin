@@ -2,8 +2,9 @@
 一个基于Vue+elementUI的多iframe窗口后端模板
 
 ## 下载
-**GitHub**: [https://kevinlu98.github.io/lw-admin/](https://kevinlu98.github.io/lw-admin/)
-**码云**: [https://gitee.com/kevinlu98/lw-admin/](https://gitee.com/kevinlu98/lw-admin/)
+- **GitHub**: [https://kevinlu98.github.io/lw-admin/](https://kevinlu98.github.io/lw-admin/)
+
+- **码云**: [https://gitee.com/kevinlu98/lw-admin/](https://gitee.com/kevinlu98/lw-admin/)
 
 ## 预览
 >预览地址: [点此预览](http://kevinlu98.gitee.io/lw-admin-pro/)
