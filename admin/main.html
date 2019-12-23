@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../static/js/vue.js"></script>
+    <script src="../static/js/moment.js"></script>
+    <link rel="stylesheet" href="../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/elementui/index.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script src="../static/elementui/index.js"></script>
+    <script src="../static/js/echarts.min.js"></script>
+    <style>
+        .box-card {
+            margin-bottom: 20px;
+        }
+    </style>
+    <style>
+        .el-row {
+            margin-bottom: 20px;
+        }
+
+        .el-col {
+            border-radius: 4px;
+        }
+
+        .bg-purple {
+            background: #EBEEF5;
+        }
+
+        .grid-content {
+            border-radius: 4px;
+            min-height: 36px;
+            padding: 10px;
+            font-size: 13px;
+            color: #303133;
+        }
+
+        .grid-content span {
+            margin: 10px 0 0 10px;
+            display: block;
+            font-size: 32px;
+            font-weight: 100;
+            color: #67C23A;
+        }
+
+        .row-bg {
+            padding: 10px 0;
+            background-color: #f9fafc;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <el-card class="box-card">
+        <span>欢迎您: <span style="color: #F56C6C;font-weight: 700;">管理员</span>！当前时间: <span
+                v-text="nowTime"></span> </span>
+    </el-card>
+    <el-card class="lw-inline-box">
+        <div slot="header" class="clearfix">
+            <i class="fa fa-bookmark"></i>
+            <span style="font-weight: 600;">欢迎您</span>
+        </div>
+        <div class="text item">
+            <p style="font-weight: 200;">
+                虽然已经用过不少优秀基于elementUI的后台模板，
+                但是大多数都是配合webpack使用的SPA，
+                这对于从来没有接触过webpack的同学来说不是很友好，
+                而且很多后端程序员在写前端的时候都比较喜欢拿一份纯静态页面来改，
+                所以SPA或者使用webpack构件的项目对他们来说确实不太友好，
+                于是在经过激烈的思想斗争后，决定自己写一个简单的管理模板。
+                用到的东西不多，适合小白参考，大佬绕过，不喜勿喷，谢谢
+            </p>
+            <p style="margin-bottom: 0;">参考文档:</p>
+            <el-button type="text" @click="elementdoc">《elementUI官方文档》</el-button>
+            <el-button type="text" @click="fontdoc">《Font Awesome 中文网》</el-button>
+            <el-button type="text" @click="vuedoc">《Vue官方文档》</el-button>
+        </div>
+    </el-card>
+    <el-card class="lw-inline-box">
+        <div slot="header" class="clearfix">
+            <i class="fa fa-align-justify"></i>
+            <span style="font-weight: 600;">版本信息</span>
+        </div>
+        <div class="text item">
+            <table class="lw-table">
+                <tr>
+                    <td>当前版本</td>
+                    <td>v1.0.0</td>
+                </tr>
+                <tr>
+                    <td>基于框架</td>
+                    <td>vue2.0 + element-ui@2.7.2</td>
+                </tr>
+                <tr>
+                    <td>主要特色</td>
+                    <td>页面简介, 舍弃了配合webpack,
+                        不使用webpack、gulp等构建工具也可以写代码，不必再费尽心机搭建一个代码编译环境
+                    </td>
+                </tr>
+                <tr>
+                    <td>获取渠道</td>
+                    <td>
+                        <el-button type="primary" size="small" round @click="github"><i class="fa fa-download"></i>
+                            GitHub
+                        </el-button>
+                        <el-button type="primary" size="small" round @click="gitee"><i class="fa fa-download"></i> 码云
+                        </el-button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </el-card>
+    <el-card class="lw-inline-box">
+        <div slot="header" class="clearfix">
+            <i class="fa fa-address-card"></i>
+            <span style="font-weight: 600;">作者信息</span>
+        </div>
+        <div class="text item">
+            <table class="lw-table">
+                <tr>
+                    <td>作者</td>
+                    <td>冷文</td>
+                </tr>
+                <tr>
+                    <td>个人主页</td>
+                    <td>
+                        <el-button type="text" size="small" @click="mypage">点此访问</el-button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>QQ联系</td>
+                    <td>
+                        <el-button type="primary" size="small" round @click="qqcall"><i class="fa fa-qq"></i> 点此联系
+                        </el-button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>邮箱联系</td>
+                    <td style="padding-bottom: 28px">
+                        <i class="fa fa-envelope" style="margin-right: 5px;"></i> kevinlu98@qq.com <br>
+                        <i class="fa fa-envelope" style="margin-right: 5px;"></i> kevinlu98@163.com<br>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </el-card>
+
+    <el-card class="box-card">
+        <div slot="header" class="clearfix">
+            <span style="font-weight: 600;">站点统计</span>
+        </div>
+        <div class="text item">
+
+            <el-row :gutter="20">
+                <el-col :span="4">
+                    <div class="grid-content bg-purple">
+                        文章数
+                        <span>19</span>
+                    </div>
+                </el-col>
+                <el-col :span="4">
+                    <div class="grid-content bg-purple">
+                        用户数
+                        <span>1002</span>
+                    </div>
+                </el-col>
+                <el-col :span="4">
+                    <div class="grid-content bg-purple">
+                        留言
+                        <span>30</span>
+                    </div>
+                </el-col>
+                <el-col :span="4">
+                    <div class="grid-content bg-purple">
+                        浏览量
+                        <span>39</span>
+                    </div>
+                </el-col>
+                <el-col :span="4">
+                    <div class="grid-content bg-purple">
+                        标签数
+                        <span>21</span>
+                    </div>
+                </el-col>
+
+
+            </el-row>
+
+        </div>
+    </el-card>
+    <el-card class="lw-inline-box" style="height: 425px;width: 48%;">
+        <div id="chart1" style="width: 600px;height:425px;"></div>
+    </el-card>
+    <el-card class="lw-inline-box lw-fr" style="height: 850px;width: 50%;">
+        <div id="chart2" style="width: 100%;height:850px;"></div>
+    </el-card>
+    <el-card class="lw-inline-box" style="height: 425px;width: 48%;">
+        <div id="chart3" style="width: 600px;height:425px;"></div>
+    </el-card>
+
+</div>
+
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    // app.myChart = echarts.init(document.getElementById('main'));
+
+    // 使用刚指定的配置项和数据显示图表。
+
+</script>
+
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            chart1: {},
+            chart2: {},
+            chart3: {},
+            nowTime: '',
+        },
+        methods: {
+            mypage: function () {
+                window.open("http://www.kevinlu98.cn", "_blank")
+            },
+            qqcall: function () {
+                window.open("tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1628048198", "_blank")
+            },
+            vuedoc: function () {
+                window.open("https://cn.vuejs.org/", "_blank")
+            },
+            fontdoc: function () {
+                window.open("http://www.fontawesome.com.cn/faicons/", "_blank")
+            },
+            elementdoc: function () {
+                window.open("https://element.eleme.cn/2.0/#/zh-CN/component/installation", "_blank")
+            },
+            gitee: function () {
+                window.open("https://gitee.com/kevinlu98/lw-admin", "_blank");
+            },
+            github: function () {
+                window.open("https://github.com/kevinlu98/lw-admin", "_blank");
+            }
+        },
+        created: function () {
+            let that = this
+            that.nowTime = moment().format('YYYY-MM-DD HH:mm:ss')
+            window.setInterval(function () {
+                that.nowTime = moment().format('YYYY-MM-DD HH:mm:ss')
+            }, 1000)
+
+        },
+        mounted: function () {
+
+            this.chart1 = echarts.init(document.getElementById('chart1'));
+            this.chart2 = echarts.init(document.getElementById('chart2'));
+            this.chart3 = echarts.init(document.getElementById('chart3'));
+            // 指定图表的配置项和数据
+            let option1 = {
+                title: {
+                    text: '访问来源',
+                    subtext: '冷文博客',
+                    x: 'center'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: '55%',
+                        center: ['50%', '60%'],
+                        data: [
+                            {value: 335, name: '直接访问'},
+                            {value: 310, name: '邮件营销'},
+                            {value: 234, name: '联盟广告'},
+                            {value: 135, name: '视频广告'},
+                            {value: 1548, name: '搜索引擎'}
+                        ],
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            };
+            let option2 = {
+                title: {
+                    text: '访问来源图'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {
+                    data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: '邮件营销',
+                        type: 'line',
+                        stack: '总量',
+                        areaStyle: {},
+                        data: [120, 132, 101, 134, 90, 230, 210]
+                    },
+                    {
+                        name: '联盟广告',
+                        type: 'line',
+                        stack: '总量',
+                        areaStyle: {},
+                        data: [220, 182, 191, 234, 290, 330, 310]
+                    },
+                    {
+                        name: '视频广告',
+                        type: 'line',
+                        stack: '总量',
+                        areaStyle: {},
+                        data: [150, 232, 201, 154, 190, 330, 410]
+                    },
+                    {
+                        name: '直接访问',
+                        type: 'line',
+                        stack: '总量',
+                        areaStyle: {normal: {}},
+                        data: [320, 332, 301, 334, 390, 330, 320]
+                    },
+                    {
+                        name: '搜索引擎',
+                        type: 'line',
+                        stack: '总量',
+                        label: {
+                            normal: {
+                                show: true,
+                                position: 'top'
+                            }
+                        },
+                        areaStyle: {normal: {}},
+                        data: [820, 932, 901, 934, 1290, 1330, 1320]
+                    }
+                ]
+            };
+            let option3 = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'vertical',
+                    x: 'left',
+                    data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+                },
+                series: [
+                    {
+                        name: '访问来源',
+                        type: 'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: false,
+                                position: 'center'
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: false
+                            }
+                        },
+                        data: [
+                            {value: 335, name: '直接访问'},
+                            {value: 310, name: '邮件营销'},
+                            {value: 234, name: '联盟广告'},
+                            {value: 135, name: '视频广告'},
+                            {value: 1548, name: '搜索引擎'}
+                        ]
+                    }
+                ]
+            };
+
+            this.chart1.setOption(option1);
+            this.chart2.setOption(option2);
+            this.chart3.setOption(option3);
+        }
+    })
+</script>
+
+</body>
+</html>

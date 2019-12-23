@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/elementui/index.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <script src="../../static/elementui/index.js"></script>
+    <script src="../../static/js/moment.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-card shadow="never" style="margin-bottom: 20px;">
+        <div class="lw-box-title">
+            新增 <i class="fa fa-plus"></i>
+        </div>
+        <div>
+            <el-table :data="entity"
+                      border
+                      style="width: 100%">
+                <el-table-column
+                        prop="src"
+                        label="预览"
+                        width="400">
+                    <template slot-scope="scope">
+                        <div class="lw-image-small" style="display: inline-block; vertical-align: middle;">
+                            <img :src="scope.row.src" alt="" @click="displayOpen(scope.row.src)">
+                        </div>
+                        <span style="color: #909399;">点击图片预览</span>
+                        <el-button type="text" size="small">上传</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="url"
+                        width="500"
+                        label="URL">
+                    <template slot-scope="scope">
+                        <el-input placeholder="请输入URL"
+                                  size="mini"
+                                  v-model="scope.row.url">
+                        </el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        width="50"
+                        prop="enable"
+                        label="可用">
+                    <template slot-scope="scope">
+                        <el-switch active-value="1"
+                                   inactive-value="0"
+                                   v-model="scope.row.enable">
+                        </el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="sort"
+                        width="100"
+                        label="排序">
+                    <template slot-scope="scope">
+                        <el-input size="mini"
+                                  type="number"
+                                  v-model="scope.row.sort">
+                        </el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column width="100"
+                                 label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="primary" style="padding: 5px 10px; border-radius: 0"><i class="fa fa-plus"></i> 新增</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+    </el-card>
+    <el-card shadow="never">
+        <div class="lw-box-title">
+            列表 <span>(点击【编辑】按钮出现输入框，修改完成后点击【确认】按钮进行保存)</span>
+        </div>
+        <div>
+            <el-table
+                    :data="tableData"
+                    border
+                    style="width: 100%">
+                <el-table-column
+                        type="index"
+                        width="50"
+                        label="序号">
+                </el-table-column>
+                <el-table-column
+                        prop="src"
+                        label="预览"
+                        width="400">
+                    <template slot-scope="scope">
+                        <div class="lw-image-small" style="display: inline-block; vertical-align: middle;">
+                            <img :src="scope.row.src" alt="" @click="displayOpen(scope.row.src)">
+                        </div>
+                        <span style="color: #909399;">点击图片预览</span>
+                        <el-button type="text" :disabled="disables" size="small">上传</el-button>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="date"
+                        label="更新时间">
+                </el-table-column>
+                <el-table-column
+                        prop="url"
+                        width="500"
+                        label="URL">
+                    <template slot-scope="scope">
+                        <el-row :span="24">
+                            <el-col :span="11">
+                                <el-input placeholder="请输入URL"
+                                          size="mini"
+                                          :disabled="disables"
+                                          v-model="scope.row.url">
+                                </el-input>
+                            </el-col>
+                            <el-col :span="11" class="lw-fr">
+                                <a :href="scope.row.url" target="_blank">{{scope.row.url}}</a>
+                            </el-col>
+                        </el-row>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        width="50"
+                        prop="enable"
+                        label="可用">
+                    <template slot-scope="scope">
+                        <el-switch active-value="1"
+                                   inactive-value="0"
+                                   v-model="scope.row.enable"
+                                   :disabled="disables">
+                        </el-switch>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="sort"
+                        width="100"
+                        label="排序">
+                    <template slot-scope="scope">
+                        <el-input size="mini"
+                                  type="number"
+                                  :disabled="disables"
+                                  v-model="scope.row.sort">
+                        </el-input>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        prop="sort"
+                        width="200"
+                        label="操作">
+                    <template slot-scope="scope">
+                        <el-button type="danger" size="mini" style="padding: 2px 4px; border-radius: 0">
+                            <i class="fa fa-trash"></i> 删除
+                        </el-button>
+                        <el-button type="primary" @click="enableEdit" size="mini"
+                                   style="padding: 2px 4px; border-radius: 0">
+                            <i class="fa fa-pencil"></i> 编辑
+                        </el-button>
+                        <el-button type="success" @click="disableEdit" size="mini"
+                                   style="padding: 2px 4px; border-radius: 0">
+                            <i class="fa fa-check"></i> 确认
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
+
+    </el-card>
+
+
+
+    <el-dialog :visible.sync="displayVisible">
+        <img style="width: 100%;" :src="displaySrc" alt="">
+    </el-dialog>
+
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            entity: [{
+                src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+                url: 'https://element.eleme.io/#/zh-CN/component/upload',
+                enable: 1,
+                sort: 5
+            }],
+            disables: true,
+            testd: true,
+            displaySrc: "",
+            displayVisible: false,
+            tableData: [],
+        },
+        methods: {
+            disableEdit: function () {
+                this.disables = true;
+            },
+            enableEdit: function () {
+                this.disables = false;
+            },
+            displayOpen: function (src) {
+                // console.log(entity);
+                this.displaySrc = src
+                this.displayVisible = true
+            }
+        },
+        created: function () {
+            for (let i = 0; i < 5; i++) {
+                let item = {
+                    id: i + 1,
+                    src: 'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg',
+                    url: 'http://www.baidu.com',
+                    enable: i % 2,
+                    sort: i + 1,
+                    date: moment().format('YYYY-MM-DD HH:mm:ss')
+                }
+                this.tableData.push(item);
+            }
+
+        }
+    })
+</script>
+</body>
+</html>

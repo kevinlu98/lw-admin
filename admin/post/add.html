@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/elementui/index.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <link rel="stylesheet" href="../../static/editormd/css/editormd.min.css">
+    <script src="../../static/js/jquery.min.js"></script>
+    <script src="../../static/elementui/index.js"></script>
+    <script src="../../static/editormd/editormd.js"></script>
+    <style>
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .avatar-uploader .el-upload:hover {
+            border-color: #409EFF;
+        }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 600px;
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 600px;
+            height: 200px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <el-card shadow="naver">
+        <div class="lw-box-title">
+            文章信息
+        </div>
+        <el-form :model="entity"
+                 ref="ruleForm"
+                 label-suffix=" :"
+                 label-width="100px">
+            <el-row :span="24">
+                <el-col :span="12">
+                    <el-form-item label="标题" prop="name">
+                        <el-input v-model="entity.name" clearable></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="2">
+                    <el-form-item label="其他选项" prop="recommend">
+                        <el-checkbox v-model="entity.recommend">推荐</el-checkbox>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="1">
+                    <el-form-item label="" prop="reprint">
+                        <el-checkbox v-model="entity.reprint">转载</el-checkbox>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="9">
+                    <el-form-item label="" prop="reprint">
+                        <el-input
+                                placeholder="请输入原创地址"
+                                v-model="entity.addr"
+                                :disabled="!entity.reprint">
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :span="24">
+                <el-col :span="12">
+                    <el-form-item label="简介" prop="description">
+                        <el-input type="textarea" rows="5" v-model="entity.description" clearable></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                    <el-form-item label="菜单" prop="menuId">
+                        <el-select v-model="entity.typeId" clearable style="width: 100%;" placeholder="请选择">
+                            <el-option
+                                    v-for="item in typeList"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                    <el-form-item label="标签" prop="typeIds">
+                        <el-select v-model="entity.typeIds" style="width: 100%;" clearable multiple placeholder="请选择">
+                            <el-option
+                                    v-for="item in labelList"
+                                    :key="item.id"
+                                    :label="item.name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                    <el-form-item label="隐藏资源" prop="resource   ">
+                        <el-input v-model="entity.resource" clearable></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6">
+                    <el-form-item label="云盘密码" prop="respwd">
+                        <el-input v-model="entity.respwd" clearable></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :span="24">
+                <el-col :span="10">
+                    <el-form-item label="缩略图" prop="picture">
+                        <el-input v-model="entity.picture" clearable></el-input>
+                        <div style="margin-top: 100px;" class="lw-fr">
+                            <el-button type="danger">取消</el-button>
+                            <el-button type="primary" @click="save">保存</el-button>
+                        </div>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="2">
+                    <el-upload
+                            class="upload-demo"
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :show-file-list="false"
+                            :on-success="handleAvatarSuccess"
+                            :before-upload="beforeAvatarUpload">
+                        <el-button type="primary">点击上传</el-button>
+                    </el-upload>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="预览">
+                        <div style="margin-top: 5px;border-radius: 6px; width: 100%;height: 200px;border: 1px dashed #d9d9d9;">
+                            <img :src="entity.picture" style="width: 100%; height: 100%;" alt="">
+                        </div>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+
+
+    </el-card>
+    <el-card shadow="naver">
+        <div class="lw-box-title">文章正文</div>
+        <div id="md-content" style="z-index: 1 !important;width: 100%;">
+            <textarea placeholder="博文内容" v-model="entity.content" name="content" style="display: none;"></textarea>
+        </div>
+    </el-card>
+    <el-card shadow="naver">
+        <div class="lw-box-title">操作</div>
+        <el-row :span="24">
+
+        </el-row>
+    </el-card>
+</div>
+
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        data: {
+            typeList: [],
+            labelList: [],
+            entity: {},
+            contentEditor: {}
+        },
+        methods: {
+            handleAvatarSuccess(res, file) {
+                this.entity.picture = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isLt2M = file.size / 1024 / 1024 < 5;
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 5MB!');
+                }
+                return isLt2M;
+            },
+            save: function () {
+                console.log(this.entity);
+            }
+        },
+        created: function () {
+            let names = ['前端', 'Java', 'python', 'PS技术', '文章', 'Scala']
+            for (let i = 0; i < names.length; i++) {
+                let item = {
+                    id: i + 1,
+                    name: names[i]
+                }
+                this.typeList.push(item)
+            }
+            let labels = ['java', 'js', 'html', 'spring', 'mysql', 'linux', 'springboot', 'scala']
+            for (let i = 0; i < labels.length; i++) {
+                let item = {
+                    id: i + 1,
+                    name: labels[i]
+                }
+                this.labelList.push(item)
+            }
+        }
+    })
+</script>
+<script>
+    app.contentEditor = editormd("md-content", {
+        width: '100%',
+        height: 740,
+        syncScrolling: "single",
+        path: '../../static/editormd/lib/',
+        tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+        flowChart: true,             // 开启流程图支持，默认关闭
+        sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+
+    });
+</script>
+</body>
+</html>

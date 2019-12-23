@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/elementui/index.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <script src="../../static/elementui/index.js"></script>
+    <script src="../../static/js/moment.js"></script>
+    <style>
+        .el-row {
+            margin-bottom: 20px;
+        }
+
+        .el-col {
+            border-radius: 4px;
+        }
+
+        .bg-purple-dark {
+            background: #99a9bf;
+        }
+
+        .bg-purple {
+            background: #d3dce6;
+        }
+
+        .bg-purple-light {
+            background: #e5e9f2;
+        }
+
+        .grid-content {
+            border-radius: 4px;
+            min-height: 36px;
+        }
+
+        .row-bg {
+            padding: 10px 0;
+            background-color: #f9fafc;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <el-card shadow="naver">
+        <el-row>
+            <el-col :span="12" :offset="6">
+                <div style="font-size: 20px;font-weight: 600; margin-bottom: 40px;text-align: center">
+                    站点设置
+                </div>
+                <el-form ref="form"
+                         :model="form"
+                         label-suffix=" :"
+                         label-width="80px">
+                    <el-form-item label="站点名称">
+                        <el-input v-model="form.name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="站点简介">
+                        <el-input type="textarea" v-model="form.desc" :rows="7"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">确认设置</el-button>
+                        <el-button>取消</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-col>
+        </el-row>
+
+    </el-card>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            form: {}
+        },
+        methods: {},
+        created: {}
+    })
+</script>
+</body>
+</html>

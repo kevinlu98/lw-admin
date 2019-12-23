@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/elementui/index.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <script src="../../static/elementui/index.js"></script>
+    <script src="../../static/js/moment.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-card shadow="never">
+        <el-form :inline="true" size="small" :model="searchEntity">
+            <el-form-item label="标题">
+                <el-input v-model="searchEntity.name" clearable placeholder="标题"></el-input>
+            </el-form-item>
+            <el-form-item label="分类" prop="menuId">
+                <el-select v-model="entity.typeId" clearable style="width: 100%;" placeholder="请选择">
+                    <el-option
+                            v-for="item in typeList"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="更新时间">
+                <el-date-picker
+                        v-model="searchEntity.start"
+                        align="right"
+                        type="date"
+                        clearable
+                        placeholder="开始日期"
+                        :picker-options="pickerOptions">
+                </el-date-picker>
+                至
+                <el-date-picker
+                        v-model="searchEntity.end"
+                        align="right"
+                        clearable
+                        type="date"
+                        placeholder="结束日期"
+                        :picker-options="pickerOptions">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="danger" @click="delAll"><i class="fa fa-trash"></i> 删除选中</el-button>
+                <el-button type="info" @click="resetSearch"><i class="fa fa-refresh"></i> 重置</el-button>
+                <el-button type="success" @click="search"><i class="fa fa-search"></i> 查询</el-button>
+            </el-form-item>
+        </el-form>
+    </el-card>
+    <el-card shadow="never">
+        <el-table
+                :data="tableData"
+                height="650"
+                border
+                @selection-change="handleSelectionChange"
+                style="width: 100%">
+            <el-table-column
+                    type="selection"
+                    width="55">
+            </el-table-column>
+            <el-table-column
+                    type="index"
+                    width="50"
+                    label="序号">
+            </el-table-column>
+            <el-table-column
+                    prop="title"
+                    label="标题">
+            </el-table-column>
+            <el-table-column
+                    prop="update"
+                    label="更新时间"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="author"
+                    label="作者"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="views"
+                    width="180"
+                    label="浏览量">
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    width="200">
+                <template slot-scope="scope">
+                    <el-button type="danger" size="mini" style="padding: 2px 4px; border-radius: 0">
+                        <i class="fa fa-trash"></i> 删 除
+                    </el-button>
+                    <el-button type="primary" size="mini"
+                               style="padding: 2px 4px; border-radius: 0">
+                        <i class="fa fa-pencil"></i> 编 辑
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div class="lw-fr" style="margin: 10px;">
+            <el-pagination background
+                           layout="total, prev, pager, next, sizes, jumper"
+                           :current-page.sync="page.pageNo"
+                           :page-size.sync="page.pageSize"
+                           :total="page.count"
+                           :page-sizes="[1, 10, 20, 30, 40, 50, 100]"
+                           @current-change="searchPage"
+                           @size-change="searchPage">
+            </el-pagination>
+        </div>
+    </el-card>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            addVisible: false,
+            statusIcon: true,
+            entity: {},
+            page: {
+                pageNo: 1,
+                pageSize: 10,
+                count: 1213
+            },
+            searchEntity: {},
+            pickerOptions: {
+                disabledDate(time) {
+                    return time.getTime() > Date.now();
+                },
+                shortcuts: [{
+                    text: '今天',
+                    onClick(picker) {
+                        picker.$emit('pick', new Date());
+                    }
+                }, {
+                    text: '昨天',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一周前',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一月前',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', date);
+                    }
+                }]
+            },
+            tableData: [],
+            typeList: [],
+
+        },
+        methods: {},
+        created: function () {
+            let names = ['前端', 'Java', 'python', 'PS技术', '文章', 'Scala']
+            for (let i = 0; i < names.length; i++) {
+                let item = {
+                    id: i + 1,
+                    name: names[i]
+                }
+                this.typeList.push(item)
+            }
+            let titles = ['Java从入门到放弃', 'Python爬虫', '深入浅出卷积神经网络', 'H5C3', 'Java多线程核心技术', 'MySQL核心源码解析']
+            for (let i = 0; i < titles.length; i++) {
+                let item = {
+                    id: i + 1,
+                    title: titles[i],
+                    author: '冷文',
+                    created: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    update: moment().format('YYYY-MM-DD HH:mm:ss'),
+                    views: 1213
+                }
+                this.tableData.push(item)
+            }
+        }
+    })
+</script>
+</body>
+</html>

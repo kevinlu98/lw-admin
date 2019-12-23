@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/elementui/index.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <script src="../../static/elementui/index.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-card shadow="never" style="margin-bottom: 20px;">
+        <div class="lw-box-title">
+            <i class="fa fa-plus"></i> 新增
+        </div>
+        <el-table :data="entity"
+                  border
+                  style="width: 100%">
+            <el-table-column
+                    prop="name"
+                    label="角色名称"
+                    width="400">
+                <template slot-scope="scope">
+                    <el-input size="mini"
+                              v-model="scope.row.name">
+                    </el-input>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="description"
+                    label="角色描述">
+                <template slot-scope="scope">
+                    <el-input size="mini"
+                              v-model="scope.row.description">
+                    </el-input>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="sort"
+                    width="200"
+                    label="操作">
+                <template slot-scope="scope">
+                    <el-button type="primary" style="padding: 4px 10px; border-radius: 0">
+                        <i class="fa fa-refresh"></i>重置
+                    </el-button>
+                    <el-button type="success" style="padding: 4px 10px; border-radius: 0">
+                        <i class="fa fa-check"></i>保存
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-card>
+    <el-card shadow="never">
+        <div class="lw-box-title">列表</div>
+        <el-table
+                :data="tableData"
+                border
+                style="width: 100%">
+            <el-table-column
+                    type="index"
+                    width="50"
+                    label="序号">
+            </el-table-column>
+            <el-table-column
+                    prop="name"
+                    label="角色名称"
+                    width="400">
+                <template slot-scope="scope">
+                    <el-input size="mini"
+                              v-model="scope.row.name">
+                    </el-input>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="description"
+                    label="角色描述">
+                <template slot-scope="scope">
+                    <el-input size="mini"
+                              v-model="scope.row.description">
+                    </el-input>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="sort"
+                    width="200"
+                    label="操作">
+                <template slot-scope="scope">
+                    <el-button type="danger" size="mini" style="padding: 2px 4px; border-radius: 0">
+                        <i class="fa fa-trash"></i> 删除
+                    </el-button>
+                    <el-button type="success" size="mini" style="padding: 2px 4px; border-radius: 0"
+                               @click="enablePower(scope.row.id)">
+                        <i class="fa fa-wrench"></i> 授权
+                    </el-button>
+                    <el-button type="primary" size="mini"
+                               style="padding: 2px 4px; border-radius: 0">
+                        <i class="fa fa-check"></i> 确定
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </el-card>
+    <el-dialog title="授权操作" width="30%" :visible.sync="treeVisible">
+        <!-- 树插件 -->
+        <el-tree
+                ref="tree"
+                :data="treeData"
+                node-key="id"
+                :default-expand-all="true"
+                :default-checked-keys="mymenus"
+                show-checkbox
+                :props="treeProp">
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span style="color: #2D8CF0;"><i :class="data.icon"></i> {{ data.name }}</span>
+            </span>
+        </el-tree>
+        <div slot="footer" class="dialog-footer">
+            <el-button type="primary" size="mini" plain @click="treeVisible = false">取 消</el-button>
+            <el-button type="success" size="mini" plain @click="powerOk">确 认</el-button>
+        </div>
+    </el-dialog>
+
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            mymenus: [],
+            treeProp: {
+                children: 'childList',
+                label: 'name'
+            },
+            treeVisible: false,
+            entity: [{}],
+            tableData: [],
+            treeData: []
+        },
+        methods: {
+            enablePower: function (id) {
+                this.treeVisible = true
+            },
+            powerOk: function () {
+                this.treeVisible = false
+            }
+        },
+        created: function () {
+            let names = ['架构师', '项目经理', '站长', '副站长', '管理员', '测试角色1', '测试角色2', '程序员']
+            for (let i = 0; i < names.length; i++) {
+                let item = {
+                    id: i + 1,
+                    name: names[i],
+                    description: '暂无'
+                }
+                this.tableData.push(item);
+            }
+            console.log(this.tableData);
+            this.treeData = [
+                {
+                    id: 1293,
+                    name: '首页',
+                    icon: 'fa fa-server',
+                    url: 'sa-html/sa-doc.html',
+                    parentId: 0
+                },
+                {
+                    id: 1,
+                    name: '用户管理',
+                    icon: 'fa fa-graduation-cap',
+                    info: '对用户列表、添加、统计等等...',
+                    childList: [
+                        {
+                            id: '1-1',
+                            name: '管理员管理',
+                            url: 'user/index.html',
+                            parentId: 1
+                        },
+                        {
+                            id: '1-2',
+                            name: '用户管理',
+                            url: 'user/index.html',
+                            parentId: 1
+                        }
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 2,
+                    name: '权限控制',
+                    icon: 'fa fa-paper-plane',
+                    info: '对系统角色权限的分配等设计，敏感度较高，请谨慎授权',
+                    childList: [
+                        {
+                            id: '2-1',
+                            name: '角色列表',
+                            url: 'permission/role.html',
+                            parentId: 2
+                        },
+                        {
+                            id: '2-2',
+                            name: '菜单列表',
+                            url: 'sa-html/role/menu-list.html',
+                            parentId: 2
+                        }
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 3,
+                    name: '文章管理',
+                    icon: 'fa fa-line-chart',
+                    info: '对文章的增删改查、维护',
+                    childList: [
+                        {
+                            id: '3-1',
+                            name: '文章列表',
+                            url: 'sa-html/article/art-list.html',
+                            parentId: 3
+                        },
+                        {
+                            id: '3-2',
+                            name: '文章发表',
+                            url: 'sa-html/article/art-add.html',
+                            parentId: 3
+                        }
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 4,
+                    name: '系统设置',
+                    icon: 'fa fa-cog',
+                    info: '对系统运行时的一些参数的设置',
+                    childList: [
+                        {
+                            id: '4-1',
+                            name: '站点设置',
+                            url: 'setting/website.html',
+                            info: '对服务器参数的设置',
+                            parentId: 4
+                        },
+                        {
+                            id: '4-2',
+                            name: '轮播图设置',
+                            url: 'setting/rotation.html',
+                            parentId: 4
+                        },
+
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 5,
+                    name: '其他页面',
+                    icon: 'fa fa-file-o',
+                    info: '对系统运行时的一些参数的设置',
+                    childList: [
+                        {
+                            id: '5-1',
+                            name: '登录页面',
+                            url: 'page/login.html',
+                            info: '对服务器参数的设置',
+                            parentId: 5
+                        },
+                        {
+                            id: '5-2',
+                            name: '404页面',
+                            url: 'page/404.html',
+                            parentId: 5
+                        },
+                        {
+                            id: '5-3',
+                            name: '500页面',
+                            url: 'page/500.html',
+                            parentId: 5
+                        }
+
+                    ],
+                    parentId: 0
+                }
+            ]
+        }
+    })
+</script>
+</body>
+</html>

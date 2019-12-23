@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/elementui/index.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <script src="../../static/elementui/index.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-card>
+        <div class="lw-box-title">
+            菜单预览
+        </div>
+        <el-tree
+                ref="tree"
+                :data="treeData"
+                node-key="id"
+                :default-expand-all="true"
+                :props="treeProp"
+        >
+            <span class="custom-tree-node" slot-scope="{ node, data }">
+                <span style="color: #2D8CF0;"><i :class="data.icon"></i> {{ data.name }}</span>
+                <span>
+                    <el-button type="text" v-if="data.parentId==0" style="color: #13ce66;"
+                               size="mini" @click="showEdit(data.id)">新增</el-button>
+                    <el-button type="text" style="color: #50bfff;" size="mini" @click="edit(data)">修改</el-button>
+                    <el-button type="text" style="color: #ff4949;" size="mini">删除</el-button>
+                </span>
+            </span>
+        </el-tree>
+    </el-card>
+
+    <el-dialog :visible.sync="editVisible" width="30%">
+        <div slot="title" style="font-weight: bold;font-size: larger"></div>
+        <el-form :model="entity"
+                 label-position="right"
+                 label-width="90px"
+                 label-suffix=" :"
+                 ref="entity">
+            <input type="hidden" name="id">
+            <el-form-item prop="name" label="菜单名称">
+                <el-input size="mini" v-model="entity.name" clearable></el-input>
+            </el-form-item>
+            <el-form-item prop="icon" label="菜单图标">
+                <el-select
+                        clearable
+                        v-model="entity.icon"
+                        filterable
+                        allow-create
+                        placeholder="菜单图标">
+                    <el-option
+                            v-for="item in iconList"
+                            :key="item"
+                            :label="item"
+                            :value="item">
+                        <span style="float: left"><i :class="item"></i></span>
+                    </el-option>
+                </el-select>
+                <span> <span style="font-size: 12px;color: #13ce66;">预览:</span> <i :class="entity.icon"></i></span>
+            </el-form-item>
+            <el-form-item prop="url" label="URL">
+                <el-input size="mini" v-model="entity.url" clearable></el-input>
+            </el-form-item>
+            <el-form-item prop="info" label="菜单备注">
+                <el-input v-model="entity.info" type="textarea" clearable></el-input>
+            </el-form-item>
+            <el-form-item prop="parentId" label="父菜单">
+                <el-select
+                        v-model="entity.parentId"
+                        clearable
+                        filterable
+                        allow-create
+                        placeholder="请选择父级菜单">
+                    <el-option
+                            v-for="item in treeData"
+                            :key="item.id"
+                            :label="item.name"
+                            :value="item.id">
+                        <span style="float: left"><i :class="item.icon"></i> {{item.name}}</span>
+                    </el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button type="primary" size="mini" plain @click="editVisible=false;entity={}">取 消</el-button>
+            <el-button type="success" size="mini" plain @click="add()">确 认</el-button>
+        </div>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            iconList: [],
+            entity: {},
+            editVisible: false,
+            treeProp: {
+                children: 'childList',
+                label: 'name'
+            },
+            treeData: []
+        },
+        methods: {
+            add: function () {
+
+            },
+            showEdit: function (id) {
+                this.editVisible = true;
+            },
+            edit: function (entity) {
+                this.editVisible = true;
+            }
+        },
+        created: function () {
+            this.treeData = [
+                {
+                    id: 1293,
+                    name: '首页',
+                    icon: 'fa fa-server',
+                    url: 'sa-html/sa-doc.html',
+                    parentId: 0
+                },
+                {
+                    id: 1,
+                    name: '用户管理',
+                    icon: 'fa fa-graduation-cap',
+                    info: '对用户列表、添加、统计等等...',
+                    childList: [
+                        {
+                            id: '1-1',
+                            name: '管理员管理',
+                            url: 'user/index.html',
+                            parentId: 1
+                        },
+                        {
+                            id: '1-2',
+                            name: '用户管理',
+                            url: 'user/index.html',
+                            parentId: 1
+                        }
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 2,
+                    name: '权限控制',
+                    icon: 'fa fa-paper-plane',
+                    info: '对系统角色权限的分配等设计，敏感度较高，请谨慎授权',
+                    childList: [
+                        {
+                            id: '2-1',
+                            name: '角色列表',
+                            url: 'permission/role.html',
+                            parentId: 2
+                        },
+                        {
+                            id: '2-2',
+                            name: '菜单列表',
+                            url: 'sa-html/role/menu-list.html',
+                            parentId: 2
+                        }
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 3,
+                    name: '文章管理',
+                    icon: 'fa fa-line-chart',
+                    info: '对文章的增删改查、维护',
+                    childList: [
+                        {
+                            id: '3-1',
+                            name: '文章列表',
+                            url: 'sa-html/article/art-list.html',
+                            parentId: 3
+                        },
+                        {
+                            id: '3-2',
+                            name: '文章发表',
+                            url: 'sa-html/article/art-add.html',
+                            parentId: 3
+                        }
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 4,
+                    name: '系统设置',
+                    icon: 'fa fa-cog',
+                    info: '对系统运行时的一些参数的设置',
+                    childList: [
+                        {
+                            id: '4-1',
+                            name: '站点设置',
+                            url: 'setting/website.html',
+                            info: '对服务器参数的设置',
+                            parentId: 4
+                        },
+                        {
+                            id: '4-2',
+                            name: '轮播图设置',
+                            url: 'setting/rotation.html',
+                            parentId: 4
+                        },
+
+                    ],
+                    parentId: 0
+                },
+                {
+                    id: 5,
+                    name: '其他页面',
+                    icon: 'fa fa-file-o',
+                    info: '对系统运行时的一些参数的设置',
+                    childList: [
+                        {
+                            id: '5-1',
+                            name: '登录页面',
+                            url: 'page/login.html',
+                            info: '对服务器参数的设置',
+                            parentId: 5
+                        },
+                        {
+                            id: '5-2',
+                            name: '404页面',
+                            url: 'page/404.html',
+                            parentId: 5
+                        },
+                        {
+                            id: '5-3',
+                            name: '500页面',
+                            url: 'page/500.html',
+                            parentId: 5
+                        }
+
+                    ],
+                    parentId: 0
+                }
+            ]
+            this.iconList = [
+                'el-icon-arrow-down',
+                'el-icon-arrow-left',
+                'el-icon-arrow-right',
+                'el-icon-arrow-up',
+                'el-icon-caret-bottom',
+                'el-icon-caret-left',
+                'el-icon-caret-right',
+                'el-icon-caret-top',
+                'el-icon-check',
+                'el-icon-circle-check',
+                'el-icon-circle-close',
+                'el-icon-circle-cross',
+                'el-icon-close',
+                'el-icon-upload',
+                'el-icon-d-arrow-left',
+                'el-icon-d-arrow-right',
+                'el-icon-d-caret',
+                'el-icon-date',
+                'el-icon-delete',
+                'el-icon-document',
+                'el-icon-edit',
+                'el-icon-information',
+                'el-icon-loading',
+                'el-icon-menu',
+                'el-icon-message',
+                'el-icon-minus',
+                'el-icon-more',
+                'el-icon-picture',
+                'el-icon-plus',
+                'el-icon-search',
+                'el-icon-setting',
+                'el-icon-share',
+                'el-icon-star-off',
+                'el-icon-star-on',
+                'el-icon-time',
+                'el-icon-warning',
+                'el-icon-delete2',
+                'el-icon-upload2',
+                'el-icon-view'
+            ]
+        }
+    })
+</script>
+</body>
+</html>

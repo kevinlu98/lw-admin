@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>冷文博客-后台管理系统</title>
+    <script src="../../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../static/elementui/index.css">
+    <link rel="stylesheet" href="../../static/css/style.css">
+    <script src="../../static/elementui/index.js"></script>
+    <style>
+        .el-card {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+
+    <el-card shadow="never">
+        <el-form :inline="true" size="small" :model="searchEntity">
+            <el-form-item label="用户名">
+                <el-input v-model="searchEntity.name" clearable placeholder="用户名"></el-input>
+            </el-form-item>
+
+            <el-form-item label="注册时间">
+                <el-date-picker
+                        v-model="searchEntity.start"
+                        align="right"
+                        type="date"
+                        clearable
+                        placeholder="开始日期"
+                        :picker-options="pickerOptions">
+                </el-date-picker>
+                至
+                <el-date-picker
+                        v-model="searchEntity.end"
+                        align="right"
+                        clearable
+                        type="date"
+                        placeholder="结束日期"
+                        :picker-options="pickerOptions">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+                <el-checkbox label="仅查看未激活用户" v-model="searchEntity.active" name="type"></el-checkbox>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="danger" @click="delAll"><i class="fa fa-trash"></i> 删除选中</el-button>
+                <el-button type="info" @click="resetSearch"><i class="fa fa-refresh"></i> 重置</el-button>
+                <el-button type="success" @click="search"><i class="fa fa-search"></i> 查询</el-button>
+            </el-form-item>
+        </el-form>
+
+    </el-card>
+
+    <el-card shadow="never">
+        <el-table
+                :data="tableData"
+                height="650"
+                border
+                @selection-change="handleSelectionChange"
+                style="width: 100%">
+            <el-table-column
+                    type="selection"
+                    width="55">
+            </el-table-column>
+            <el-table-column
+                    type="index"
+                    width="50"
+                    label="序号">
+            </el-table-column>
+            <el-table-column
+                    prop="name"
+                    label="姓名"
+                    width="180">
+                <template slot-scope="scope">
+                    <div class="lw-header">
+                        <img :src="scope.row.avatar" alt="">
+                    </div>
+                    <span style="margin-left: 10px;margin-right: 5px;">{{scope.row.name}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="date"
+                    label="日期"
+                    width="180">
+            </el-table-column>
+            <el-table-column
+                    prop="address"
+                    label="地址">
+            </el-table-column>
+            <el-table-column
+                    label="操作"
+                    width="200">
+                <template slot-scope="scope">
+                    <el-button @click="stopUser(scope.row)" style="color: #E6A23C;" type="text" size="small">禁用
+                    </el-button>
+                    <el-button @click="deleteOne(scope.row)" style="color: #F56C6C;" type="text" size="small">删除
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <div class="lw-fr" style="margin: 10px;">
+            <el-pagination background
+                           layout="total, prev, pager, next, sizes, jumper"
+                           :current-page.sync="page.pageNo"
+                           :page-size.sync="page.pageSize"
+                           :total="page.count"
+                           :page-sizes="[1, 10, 20, 30, 40, 50, 100]"
+                           @current-change="searchPage"
+                           @size-change="searchPage">
+            </el-pagination>
+        </div>
+    </el-card>
+
+
+    <el-dialog title="新增用户" width="30%" :visible.sync="addVisible">
+        <el-form :model="entity"
+                 ref="entity"
+                 :rules="rules"
+                 label-suffix=" :"
+                 :status-icon="statusIcon"
+                 label-width="90px">
+            <el-form-item label="用户名" prop="username">
+                <el-input v-model="entity.username"></el-input>
+            </el-form-item>
+            <el-form-item label="昵称" prop="nickname">
+                <el-input v-model="entity.nickname"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱" prop="email">
+                <el-input v-model="entity.email"></el-input>
+            </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="addVisible = false">取 消</el-button>
+            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+    </el-dialog>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            addVisible: false,
+            statusIcon: true,
+            entity: {},
+            rules: {
+                username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                nickname: [{required: true, message: '请输入用户名', trigger: 'blur'}],
+                email: [{required: true, message: '请输入用户名', trigger: 'blur'}]
+            },
+            page: {
+                pageNo: 1,
+                pageSize: 10,
+                count: 1213
+            },
+            selectUser: [],
+            searchEntity: {},
+            rules: {},
+            pickerOptions: {
+                disabledDate(time) {
+                    return time.getTime() > Date.now();
+                },
+                shortcuts: [{
+                    text: '今天',
+                    onClick(picker) {
+                        picker.$emit('pick', new Date());
+                    }
+                }, {
+                    text: '昨天',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一周前',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                        picker.$emit('pick', date);
+                    }
+                }, {
+                    text: '一月前',
+                    onClick(picker) {
+                        const date = new Date();
+                        date.setTime(date.getTime() - 3600 * 1000 * 24 * 30);
+                        picker.$emit('pick', date);
+                    }
+                }]
+            },
+            tableData: [{
+                date: '2016-05-03',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-02',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-04',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-01',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-08',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-06',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-07',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-07',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-07',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }, {
+                date: '2016-05-07',
+                name: '王小虎',
+                avatar: 'http://q2lyyhh2x.bkt.clouddn.com/header.jpg',
+                address: '上海市普陀区金沙江路 1518 弄'
+            }]
+        },
+        methods: {
+            delAll: function () {
+                console.log(this.selectUser);
+                this.$confirm(`此操作将永久删除所选用户, 是否继续?`, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                })
+            },
+            handleSelectionChange: function (val) {
+                this.selectUser = val
+            },
+            repwd: function (entity) {
+                this.$confirm(`此操作将重置用户[${entity.name}]的密码, 是否继续?`, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '操作成功!'
+                    });
+                })
+            },
+            deleteOne: function (entity) {
+                this.$confirm(`此操作将永久删除用户[${entity.name}], 是否继续?`, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                })
+            },
+            stopUser: function (entity) {
+                this.$confirm(`此操作将禁用用户[${entity.name}], 是否继续?`, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '操作成功!'
+                    });
+                })
+            },
+            searchPage: function () {
+            },
+            resetSearch: function () {
+                this.searchEntity = {}
+            },
+            search: function () {
+                console.log(this.searchEntity);
+            }
+        },
+        created: function () {
+
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../static/js/vue.js"></script>
+    <link rel="stylesheet" href="../static/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/elementui/index.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script src="../static/elementui/index.js"></script>
+</head>
+<body>
+<div id="app">
+    <el-tree style="margin-left: 20px; background-color: #F6F6F6" :data="treeData"
+             node-key="id" :props="defaultProps" @node-click="handleNodeClick">
+    </el-tree>
+    <el-tabs v-model="editableTabsValue" type="border-card" closable @tab-remove="removeTab">
+        <el-tab-pane
+                v-for="(item, index) in editableTabs"
+                :key="item.name"
+                :label="item.title"
+                :name="item.name"
+        >
+            <iframe :src="item.content" style="width: 100%;height: 450px" frameborder="0"></iframe>
+        </el-tab-pane>
+    </el-tabs>
+
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            treeData: [
+                {
+                    id: 1,
+                    label: '合同管理',
+                    icon: 'el-icon-location',
+                    children: [{
+                        id: 2,
+                        label: '合同详情',
+                        icon: 'el-icon-location-outline'
+                    }, {
+                        id: 3,
+                        label: '合同明细',
+                        url: '/ContractDetails/index',
+                        icon: 'el-icon-location-outline'
+                    }]
+                }
+            ],
+            defaultProps: {
+                children: 'children',
+                label: 'label'
+            },
+            editableTabsValue: '1',
+            editableTabs: [{
+                title: '首页',
+                name: '1',
+                content: 'https://www.baidu.com'
+            }],
+            tabIndex: 1
+        },
+        methods: {
+            //标签页处理
+            handleNodeClick(data) {
+                if (!data.children) {
+                    //取得当前已打开的tab页
+                    let tabs = this.editableTabs;
+                    let flag = true;//表示可以新打开
+                    tabs.forEach((tab, index) => {
+                        if (tab.title === data.label) {
+                            //如果打开则选中
+                            this.editableTabsValue = tab.name;
+                            flag = false;
+                            return;
+                        }
+                    });
+                    if (flag) {//如果没有打开则添加
+                        let newTabName = ++this.tabIndex + '';
+                        this.editableTabs.push({
+                            title: data.label,
+                            name: newTabName,
+                            content: data.url
+                        });
+                        this.editableTabsValue = newTabName;
+                    }
+                }
+            },
+            //标签页移除
+            removeTab(targetName) {
+                let tabs = this.editableTabs;
+                let activeName = this.editableTabsValue;
+                if (activeName === targetName) {
+                    tabs.forEach((tab, index) => {
+                        if (tab.name === targetName) {
+                            let nextTab = tabs[index + 1] || tabs[index - 1];
+                            if (nextTab) {
+                                activeName = nextTab.name;
+                            }
+                        }
+                    });
+                }
+
+                this.editableTabsValue = activeName;
+                this.editableTabs = tabs.filter(tab => tab.name !== targetName);
+            }
+        }
+    })
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,125 @@
+/**
+Time: 2019-12-17 00:18
+Author: 冷文
+Email: kevinlu98@qq.com
+Desc: 
+ */
+
+.lw-header {
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+    display: inline-block;
+    overflow: hidden;
+    /*margin-top: 10px;*/
+    vertical-align: middle;
+}
+
+.lw-button-mini {
+    padding: 2px 4px !important;
+}
+
+.lw-box-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.lw-box-title span {
+    font-weight: 200;
+    font-size: 12px;
+    color: #909399;
+}
+
+.lw-header * {
+    height: 100%;
+    width: 100%;
+}
+
+.lw-image-middle {
+    height: 500px;
+    width: 750px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.lw-image-middle img {
+    height: 100%;
+    width: 100%;
+}
+
+.lw-image-small {
+    height: 72px;
+    width: 144px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.lw-image-small img {
+    height: 100%;
+    width: 100%;
+}
+
+.lw-word-icon {
+    border-radius: 3px;
+    background-color: #2F4055 !important;
+    color: #ffffff;
+    padding: 0 3px 0;
+    font-size: 12px;
+}
+
+
+.lw-table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 14px;
+    font-weight: 200;
+    width: 100%;
+}
+
+.lw-inline-box {
+    display: inline-block;
+    width: 33%;
+    height: 338px;
+}
+
+.lw-table td {
+    border: 1px solid #cccccc;
+    padding: 10px 20px 10px 20px;
+    height: 30px;
+}
+
+.lw-table td:nth-child(1) {
+    font-weight: 400;
+    text-align: right;
+}
+
+.lw-table td:nth-child(2) {
+    width: 300px;
+}
+
+.lw-fr {
+    float: right;
+}
+
+.lw-fl {
+    float: left;
+}
+
+.lw-a-no-hover:link {
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.lw-a-no-hover:visited {
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.lw-a-no-hover:hover {
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: underline;
+}
