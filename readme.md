@@ -34,21 +34,28 @@
     ```
     - 菜单预览
     展开
-    ![](./images/111.png)
+    ![](https://s2.ax1x.com/2019/12/23/lShNRg.png)
     折叠
-    ![](./images/222.png)
+    ![](https://s2.ax1x.com/2019/12/23/lShrd0.png)
 - **基础**: 只需要会一点前端基础就可以了，大家完全可以参考[elementUI官方文档](https://element.eleme.cn/2.0/#/zh-CN/component/installation)照猫画虎
 - **交互**: 前后端交互用ajax即可，本项目使用jQuery发送ajax请求而不是axios,这也是考虑到很多人没有用过axios
 - **markdown支持**: 本项目利用国产开源框架Editor.md实现Markdown相关功能，具体用法请参考[Editor.md官网](http://editor.md.ipandao.com/)
     - 预览
-    ![](./images/333.png)
+    ![](https://s2.ax1x.com/2019/12/23/lShsoV.png)
 - **数据报表**: 作为一款后端管理模板，怎么能少得了数据报表呢？本项目整合了开源报表框架echart，操作简单，具体用法请参考[echart官方文档](https://www.echartsjs.com/zh/tutorial.html#5%20%E5%88%86%E9%92%9F%E4%B8%8A%E6%89%8B%20ECharts)
     - 预览
-    ![](./images/444.png)
+    ![](https://s2.ax1x.com/2019/12/23/lShcJU.png)
 - **权限相关**: 
     - 为用户分配角色
-    ![](./images/555.png)
+    ![](https://s2.ax1x.com/2019/12/23/lShWQJ.png)
     - 为角色分配权限
-    ![](./images/666.png)
+    ![](https://s2.ax1x.com/2019/12/23/lSh5e1.png)
 - **其他页面**:
     - 菜单列表
+    ![](https://s2.ax1x.com/2019/12/23/lShIdx.png)
+    ![](https://s2.ax1x.com/2019/12/23/lShHJO.png)
+    - 登录页
+    ![](https://s2.ax1x.com/2019/12/23/lShLSe.png)
+    - 错误页
+    ![](https://s2.ax1x.com/2019/12/23/lShOQH.png)
+    - 更多页面请下载后预览
