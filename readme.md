@@ -1,6 +1,13 @@
 ## lw-admin
 一个基于Vue+elementUI的多iframe窗口后端模板
 
+## 下载
+**GitHub**: [https://kevinlu98.github.io/lw-admin/](https://kevinlu98.github.io/lw-admin/)
+**码云**: [https://gitee.com/kevinlu98/lw-admin/](https://gitee.com/kevinlu98/lw-admin/)
+
+## 预览
+>预览地址: [点此预览](http://kevinlu98.gitee.io/lw-admin-pro/)
+
 ## 说明
 虽然已经用过不少优秀基于elementUI的后台模板， 但是大多数都是配合webpack使用的SPA， 这对于从来没有接触过webpack的同学来说不是很友好， 而且很多后端程序员在写前端的时候都比较喜欢拿一份纯静态页面来改， 所以SPA或者使用webpack构件的项目对他们来说确实不太友好， 于是在经过激烈的思想斗争后，决定自己写一个简单的管理模板。 用到的东西不多，适合小白参考，大佬绕过，不喜勿喷，谢谢
 
